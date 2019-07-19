@@ -830,7 +830,7 @@ namespace NetFrameworkLibraryUnitTests
         //============================================================================================
         /// <summary>
         /// Inheriting this class provides cleanup and initialization methods
-        /// that are automatically run for the inheriter
+        /// that are automatically run for the inheritor
         /// </summary>
         public abstract class AutoTestTasks
         {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasierConsolePrograms
+namespace ConsoleToolsLibrary
 {
     /// <summary>
     /// 'SelectorMenu' class allows the creation of "selector menus". A selector menu
@@ -18,8 +18,8 @@ namespace EasierConsolePrograms
     /// If navigation and selection aren't possible with the intended keyboard keys,
     /// for each, there is a fall-back key.
     /// 
-    /// While the "selector menu" isn't quick as "push button" menus (press number --> action)
-    /// , selector menus prevent accidental menu item selection
+    /// While the "selector menu" isn't quick as "basic" menus (press number --> action)
+    /// , selector menus help prevent accidental menu item selection
     /// using a "confirm selection philosophy" instead of "direct selection philosophy".
     /// 
     /// To start using a 'SelectorMenu':
@@ -29,15 +29,14 @@ namespace EasierConsolePrograms
     /// 
     /// //*** Fill Menu With Items ***
     /// menu1
-    /// .AddMenuItem(
-    ///     label: "item label 1",
-    ///     action: ()=>{ /* item action */ }
+    /// .AddItem(
+    ///     label: "item label 1"
     ///     )
-    /// .AddMenuItem(
+    /// .AddItem(
     ///     label: "item label 2",
-    ///     action: ()=>{ /* item action */ }
+    ///     action: ()=>{ }
     ///     )
-    /// .AddMenuItem(
+    /// .AddItem(
     ///     label: "item label 3",
     ///     action: ()=>{ /* item action */ }
     ///     );
@@ -61,16 +60,15 @@ namespace EasierConsolePrograms
     /// 
     /// //*** Fill Menu With Items ***
     /// menu1
-    /// .AddMenuItem(
-    ///     label: "item label 1",
-    ///     action: ()=>{ /* item action */ }
+    /// .AddItem(
+    ///     label: "item label 1"
     ///     )
-    /// .AddMenuItem(
+    /// .AddItem(
     ///     label: "item label 2",
-    ///     action: ()=>{ /* item action */ }
+    ///     action: ()=>{ }
     ///     )
     /// .AddBar()
-    /// .AddMenuItem(
+    /// .AddItem(
     ///     label: "item label 3",
     ///     action: ()=>{ /* item action */ }
     ///     );
@@ -103,15 +101,14 @@ namespace EasierConsolePrograms
     ///     
     /// //*** Fill Menu With Items ***
     /// menu1
-    /// .AddMenuItem(
-    ///     label: "item label 1",
-    ///     action: ()=>{ /* item action */ }
+    /// .AddItem(
+    ///     label: "item label 1"
     ///     )
-    /// .AddMenuItem(
+    /// .AddItem(
     ///     label: "item label 2",
-    ///     action: ()=>{ /* item action */ }
+    ///     action: ()=>{ }
     ///     )
-    /// .AddMenuItem(
+    /// .AddItem(
     ///     label: "item label 3",
     ///     action: ()=>{ /* item action */ }
     ///     );
@@ -127,7 +124,7 @@ namespace EasierConsolePrograms
     /// //|____________________________|
     /// </code>
     /// </summary>
-    class SelectorMenu
+    public sealed class SelectorMenu : Menu
     {
         /// <summary>
         /// String acts as a pointer inside a displayed 'SelectorMenu' object. Whatever option is being pointed to by the selector
@@ -139,38 +136,37 @@ namespace EasierConsolePrograms
         /// The variable is called the 'Selector' since it acts as the user's selector (the thing that enables selection visually) on a menu.
         /// </remarks>
         public Selector Selector = new Selector();
-        private const string DEFAULT_BAR      = "---------------------------";
-        private const string DEFAULT_BAR_UTF8 = "───────────────────────────";
-        private string _DefaultBarValue = DEFAULT_BAR;
-        /// <summary>
-        /// String used to visually separate menu items
-        /// </summary>
-        private string DefaultBar
-        {
-            get
-            {
-                if (Console.OutputEncoding.EncodingName == "Unicode (UTF-8)"
-                    && _DefaultBarValue != DEFAULT_BAR)
-                {
-                    return _DefaultBarValue;
-                }
-                else
-                {
-                    _DefaultBarValue = DEFAULT_BAR_UTF8;
-                    return _DefaultBarValue;
-                }
-            }
-            set {
-                _DefaultBarValue = value;
-            }
-        }
-
         /// <summary>
         /// Index of menu item the selector is currently on.
         /// <example>
         /// If Selector is on the first choice then it's position equals 0 (the index of the choice)
         /// </example>
         private int SelectorPosition = 0;
+        /// <summary>
+        /// Returns LINQ query that finds all menu items in <see cref="MenuGlobal"/>.
+        /// </summary>
+        private IEnumerable<MenuThing> MenuItemsQuery {
+            get
+            {
+                return
+                from thing in MenuGlobal
+                where thing is MenuItem
+                select thing;
+            }
+        }
+        /// <summary>
+        /// Returns LINQ query that finds all menu items in <see cref="MenuGlobal"/>.
+        /// </summary>
+        private IEnumerable<MenuThing> MenuBarsQuery {
+            get
+            {
+                return
+                from thing in MenuGlobal
+                where thing is MenuBar
+                select thing;
+            }
+        }
+
         /// <summary>
         /// Background color of the 'SelectorMenu' object.
         /// </summary>
@@ -179,11 +175,6 @@ namespace EasierConsolePrograms
         /// Foreground (text) color of the 'SelectorMenu' object.
         /// </summary>
         private ConsoleColor MenuForegroundColor = ConsoleColor.White;
-        /// <summary>
-        /// Contains all the menu items -- and bars -- displayed on
-        /// the menu.
-        /// </summary>
-        private List<MenuItem> MenuItems = new List<MenuItem>();
 
         /// <summary>
         /// 0 argument constructor.
@@ -241,24 +232,6 @@ namespace EasierConsolePrograms
             MenuForegroundColor = menuForegroundColor;
         }
 
-        /// <summary>
-        /// Sets the 'SelectorMenu' object's background color.
-        /// </summary>
-        /// <param name="menuBackgroundColor">New background color of menu</param>
-        public void SetMenuBackgroundColor(ConsoleColor menuBackgroundColor)
-        {
-            Console.BackgroundColor = menuBackgroundColor;
-        }
-
-        /// <summary>
-        /// Sets the 'SelectorMenu' object's foreground color. (Note: foreground color = text color)
-        /// </summary>
-        /// <param name="menuForegroundColor">New foreground color of menu</param>
-        public void SetMenuForegroundColor(ConsoleColor menuForegroundColor)
-        {
-            Console.ForegroundColor = menuForegroundColor;
-        }
-
 
 
         /// <summary>
@@ -271,244 +244,18 @@ namespace EasierConsolePrograms
         }
 
         /// <summary>
-        /// Adds a choice to the 'SelectorMenu' object and associates an action with that choice. Both the choice and
-        /// the associated action are placed at the end of each's dedicated list
-        /// </summary>
-        /// <param name="label">Label of menu item</param>
-        /// <param name="action">Method or delegate executed when menu item is activated</param>
-        public SelectorMenu AddMenuItem(string label, Action action)
-        {
-            this.MenuItems.Add(new MenuItem(label, action));
-            return this;
-        }
-
-        /// <summary>
-        /// Adds menu item at a specific index to the 'SelectorMenu' object and associates an action with that choice. The associated action
-        /// is placed at the same index, but in the 'ActionList' list (contains all actions in a 'SelectorMenu' object).
-        /// </summary>
-        /// <param name="index">Index where menu item is added</param>
-        /// <param name="label">Label of menu item inserted</param>
-        /// <param name="action">Method or delegate executed when menu item is activated</param>
-        public SelectorMenu InsertMenuItemAt(int index, string label, Action action)
-        {
-            if(index > this.MenuItems.Count && index >= 0)
-                this.MenuItems.Insert(index, new MenuItem(label, action));
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a visual separator for menu items after the last menu item added.
-        /// </summary>
-        /// <example>
-        /// <code>
-        /// SelectorMenu menu1 = new SelectorMenu();
-        /// menu1.AddMenuItem(
-        ///     label:"menu item 1",
-        ///     action: ()=>{}
-        ///     );
-        /// menu1.AddMenuItem(
-        ///     label:"menu item 2",
-        ///     action: ()=>{}
-        ///     );
-        /// menu1.AddBar();
-        /// menu1.AddMenuItem(
-        ///     label:"menu item 3",
-        ///     action: ()=>{}
-        ///     );
-        /// </code>
-        /// Produces the following menu:
-        /// ______________________________
-        /// |--> menu item 1              |
-        /// |menu item 2                  |
-        /// |----------------------       |
-        /// |menu item 3                  |
-        /// |_____________________________|
-        /// </example>
-        /// <returns></returns>
-        public SelectorMenu AddBar()
-        {
-            this.MenuItems.Add(
-                new MenuItem(
-                    DefaultBar,
-                    delegate () { },
-                    isTrueMenuItem: false)
-                );
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a custom visual separator for menu items after the last menu item added.
-        /// </summary>
-        ///         /// <code>
-        /// SelectorMenu menu1 = new SelectorMenu();
-        /// menu1.AddMenuItem(
-        ///     label:"menu item 1",
-        ///     action: ()=>{}
-        ///     );
-        /// menu1.AddMenuItem(
-        ///     label:"menu item 2",
-        ///     action: ()=>{}
-        ///     );
-        /// menu1.AddBar("######################");
-        /// menu1.AddMenuItem(
-        ///     label:"menu item 3",
-        ///     action: ()=>{}
-        ///     );
-        /// </code>
-        /// Produces the following menu:
-        /// ______________________________
-        /// |--> menu item 1              |
-        /// |menu item 2                  |
-        /// |######################       |
-        /// |menu item 3                  |
-        /// |_____________________________|
-        /// </example>
-        /// <param name="customBar">Visual separator added to menu</param>
-        /// <returns></returns>
-        public SelectorMenu AddBar(string customBar)
-        {
-            this.MenuItems.Add(
-                new MenuItem(
-                    customBar,
-                    delegate () { },
-                    isTrueMenuItem: false)
-                );
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the default bar used to visually separate groups of menu items.
-        /// </summary>
-        /// <param name="bar">Bar used as visual separator</param>
-        /// <returns></returns>
-        public SelectorMenu SetDefaultBar(string bar)
-        {
-            DefaultBar = bar;
-            return this;
-        }
-
-        /// <summary>
-        /// Removes the last created menu item.
-        /// </summary>
-        public SelectorMenu RemoveLastMenuItem()
-        {
-            //skip logic if no items in list
-            if (MenuItems.Count == 0)
-                return this;
-
-            //initialize local variables
-            int i = MenuItems.Count - 1;
-
-            //begin list back-tracking
-            while (i > -1)
-            {
-                //end list back-tracking if last such is found
-                if (MenuItems[i].IsTrueMenuItem)
-                    break;
-                //else continue list back-tracking
-                else
-                    i--;
-            }             
-            
-            //remove such item if 1 is found
-            if(i != -1)
-                MenuItems.RemoveAt(i);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Removes the last bar added to the menu.
-        /// </summary>
-        /// <returns></returns>
-        public SelectorMenu RemoveLastBar()
-        {
-            //skip logic if no items in list
-            if (MenuItems.Count == 0)
-                return this;
-
-            //initialize local variables
-            int i = MenuItems.Count - 1;
-
-            //begin list back-tracking
-            while (i > -1)
-            {
-                //end list back-tracking if last such is found
-                if (!MenuItems[i].IsTrueMenuItem)
-                    break;
-                //else continue list back-tracking
-                else
-                    i--;
-            }
-
-            //remove such item if 1 is found
-            if (i != -1)
-                MenuItems.RemoveAt(i);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Removes a menu item at the requested index.
-        /// </summary>
-        /// <param name="index">Index of menu item to remove</param>
-        public SelectorMenu RemoveMenuItemAt(int index)
-        {
-            if(index < this.MenuItems.Count && index >= 0)
-                MenuItems.RemoveAt(index);
-            return this;
-        }
-
-        /// <summary>
-        /// Swaps location of 2 menu items. Nothing will happen
-        /// if indexes are out of range or equal.
-        /// </summary>
-        /// <param name="menuItemIndex"></param>
-        /// <param name="newMenuItemIndex"></param>
-        public SelectorMenu SwapMenuItems(int menuItemIndex, int newMenuItemIndex)
-        {
-            if (menuItemIndex < this.MenuItems.Count && menuItemIndex >= 0
-                && newMenuItemIndex < this.MenuItems.Count && newMenuItemIndex >= 0
-                && menuItemIndex != newMenuItemIndex)
-            {
-                MenuItem menuItem1 = MenuItems[menuItemIndex];
-                MenuItem menuItem2 = MenuItems[newMenuItemIndex];
-                MenuItems.Remove(menuItem1);
-                MenuItems.Remove(menuItem2);
-                MenuItems.Insert(newMenuItemIndex, menuItem1);
-                MenuItems.Insert(menuItemIndex, menuItem2);
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// Swaps location of 2 menu items. Nothing will happen if
-        /// 'MenuItem' objects are the same.
-        /// </summary>
-        /// <param name="menu1"></param>
-        /// <param name="menu2"></param>
-        /// <returns></returns>
-        public SelectorMenu SwapMenuItems(MenuItem menu1, MenuItem menu2)
-        {
-            int menu1Index = this.MenuItems.IndexOf(menu1);
-            int menu2Index = this.MenuItems.IndexOf(menu2);
-            SwapMenuItems(menu1Index, menu2Index);
-            return this;
-        }
-
-        /// <summary>
         /// Displays all menu items and bars as defined by the 'SelectorMenu' object.
         /// However, this does not include the navigation prompt at the very bottom.
         /// </summary>
-        private void WriteMenu()
+        override protected void WriteMenu()
         {
             Console.Clear();
 
             int iterator = 0;
-            foreach (var menuItem in MenuItems)
+            foreach (var menuThing in MenuGlobal)
             {
                 //If selector at position of menu item being written...
-                if(iterator == SelectorPosition && menuItem.IsTrueMenuItem)
+                if(iterator == SelectorPosition && menuThing is MenuItem)
                 {
                     //If selector highlighting is on,
                     //then write selector highlighted
@@ -528,22 +275,22 @@ namespace EasierConsolePrograms
                     {
                         Console.BackgroundColor = Selector.BackgroundColorSelected;
                         Console.ForegroundColor = Selector.ForegroundColorSelected;
-                        Console.WriteLine(menuItem.Label);
+                        Console.WriteLine(menuThing.Text);
                         Console.BackgroundColor = this.MenuBackgroundColor;
                         Console.ForegroundColor = this.MenuForegroundColor;
                     }
                     //Else, write label without highlighting
-                    else { Console.WriteLine(menuItem.Label); }
+                    else { Console.WriteLine(menuThing.Text); }
                 }
                 //Else if selector not on menu item, write menu item without selector
-                else if (menuItem.IsTrueMenuItem)
+                else if (menuThing is MenuItem)
                 {
-                    Console.WriteLine(Selector.SelectorStrPlaceholder + menuItem.Label);
+                    Console.WriteLine(Selector.SelectorStrPlaceholder + menuThing.Text);
                 }
 
                 //If menu item is bar...
-                if (menuItem.IsTrueMenuItem == false)
-                    Console.WriteLine(menuItem.Label);
+                if (!(menuThing is MenuItem))
+                    Console.WriteLine(menuThing.Text);
 
                 iterator++;
             }
@@ -556,9 +303,9 @@ namespace EasierConsolePrograms
         /// The menu's selector position is moved here.
         /// </remarks>
         /// <seealso cref="RunMenu"/>
-        private void PromptNav()
+        override protected void PromptNav()
         {
-            int lastMenuItemIndex = MenuItems.Count - 1;
+            int lastMenuItemIndex = MenuGlobal.Count - 1;
 
             if (Console.OutputEncoding.EncodingName == "Unicode (UTF-8)")
             {
@@ -572,7 +319,7 @@ namespace EasierConsolePrograms
             }
             while (true) {
                 ConsoleKeyInfo KeyPressed = Console.ReadKey(true);
-                if (KeyPressed.KeyChar == 'U' || KeyPressed.KeyChar == 'u' || KeyPressed.Key == ConsoleKey.UpArrow)
+                if (KeyPressed.Key == ConsoleKey.U || KeyPressed.Key == ConsoleKey.UpArrow)
                 {
                     //If doable, move selector up by 1
                     if (SelectorPosition > 0)
@@ -580,23 +327,23 @@ namespace EasierConsolePrograms
                     else
                         continue;
                     //If selector is pointing at a non-menu-item...
-                    if (MenuItems[SelectorPosition].IsTrueMenuItem == false)
+                    if (!(MenuGlobal[SelectorPosition] is MenuItem))
                     {
-                        //While selector position hits bar, keep moving selector up till it hits a true menu item
-                        while (MenuItems[SelectorPosition].IsTrueMenuItem == false
+                        //While selector position hits bar, keep moving selector up till it hits a menu item
+                        while (!(MenuGlobal[SelectorPosition] is MenuItem)
                             && SelectorPosition > 0)
                             SelectorPosition--;
                         //If only bars encountered, move selector to the first menu item
-                        if (MenuItems[SelectorPosition].IsTrueMenuItem == false)
-                            SelectorPosition = MenuItems.FindIndex(item => item.IsTrueMenuItem == true);
-                        //If no true menu items can be found, set selector position to 0
+                        if (!(MenuGlobal[SelectorPosition] is MenuItem))
+                            SelectorPosition = MenuGlobal.FindIndex(item => item is MenuItem);
+                        //If no menu items can be found, set selector position to 0
                         if (SelectorPosition == -1)
                             SelectorPosition = 0;
                     }
                     //----------------------------------------------------------------
                     goto SelectorMoved;
                 }
-                else if (KeyPressed.KeyChar == 'D' || KeyPressed.KeyChar == 'd' || KeyPressed.Key == ConsoleKey.DownArrow)
+                else if (KeyPressed.Key == ConsoleKey.D || KeyPressed.Key == ConsoleKey.DownArrow)
                 {
                     //If doable, move selector down by 1
                     if (SelectorPosition < lastMenuItemIndex)
@@ -604,23 +351,23 @@ namespace EasierConsolePrograms
                     else
                         continue;
                     //If selector is pointing at a non-menu-item...
-                    if (MenuItems[SelectorPosition].IsTrueMenuItem == false)
+                    if (!(MenuGlobal[SelectorPosition] is MenuItem))
                     {
                         //While selector position hits bar, keep moving selector down till it hits a true menu item
-                        while (MenuItems[SelectorPosition].IsTrueMenuItem == false
+                        while (!(MenuGlobal[SelectorPosition] is MenuItem)
                             && SelectorPosition < lastMenuItemIndex)
                             SelectorPosition++;
                         //If only bars encountered, move selector to the first menu item
-                        if (MenuItems[SelectorPosition].IsTrueMenuItem == false)
-                            SelectorPosition = MenuItems.FindLastIndex(item => item.IsTrueMenuItem == true);
+                        if (!(MenuGlobal[SelectorPosition] is MenuItem))
+                            SelectorPosition = MenuGlobal.FindLastIndex(item => item is MenuItem);
                         //If no true menu items can be found, set selector position to 0
-                        if (MenuItems[SelectorPosition].IsTrueMenuItem == false)
+                        if (!(MenuGlobal[SelectorPosition] is MenuItem))
                             SelectorPosition = 0;
                     }
                     //-----------------------------------------------------------------
                     goto SelectorMoved;
                 }
-                else if (KeyPressed.KeyChar == 'S' || KeyPressed.KeyChar == 's' || KeyPressed.Key == ConsoleKey.Enter)
+                else if (KeyPressed.Key == ConsoleKey.S || KeyPressed.Key == ConsoleKey.Enter)
                 {
                     goto MenuItemInvoked;
                 }
@@ -633,7 +380,7 @@ namespace EasierConsolePrograms
              * , at the time, could not be found.
              */
             MenuItemInvoked:
-                MenuItems[SelectorPosition].Action.DynamicInvoke();
+                MenuGlobal[SelectorPosition].Action?.DynamicInvoke();
             SelectorMoved:
                 this.RunMenu();
         }
@@ -649,27 +396,15 @@ namespace EasierConsolePrograms
         }
 
         /// <summary>
-        /// Console is cleared and the program is shut down.
-        /// </summary>
-        public static void Exit()
-        {
-            Console.Clear();
-            System.Environment.Exit(0);
-        }
-
-        /// <summary>
         /// Sends user to a different 'SelectorMenu'. This is the recommended method to transverse between menus.
         /// Using this method makes the console cursor invisible. If one needs the cursor visible
         /// afterward, then it must be manually done.
         /// </summary>
         /// <param name="target">Menu user is sent to</param>
-        public void GoTo()
+        override public void GoTo()
         {
-            Console.Clear();
             this.SelectorPosition = 0;
-            Console.BackgroundColor = this.MenuBackgroundColor;
-            Console.ForegroundColor = this.MenuForegroundColor;
-            this.RunMenu();
+            base.GoTo();
         }
 
         /// <summary>
@@ -682,15 +417,10 @@ namespace EasierConsolePrograms
         /// </summary>
         /// <param name="target">Target menu user is sent to</param>
         /// <param name="message">Message displayed before user is sent to target</param>
-        public void GoTo(string message)
+        override public void GoTo(string message)
         {
-            Console.Clear();
             this.SelectorPosition = 0;
-            Console.BackgroundColor = this.MenuBackgroundColor;
-            Console.ForegroundColor = this.MenuForegroundColor;
-            Console.WriteLine(message);
-            Console.ReadKey(true);
-            this.RunMenu();
+            base.GoTo(message);
         }
     }
 
@@ -836,32 +566,6 @@ namespace EasierConsolePrograms
             for (int i = 0; i < loops; i++)
                 spaceString.Append(' ');
             return spaceString.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Represents a menu item shown in a selector menu.
-    /// </summary>
-    public class MenuItem
-    {
-        /// <summary>
-        /// Label of menu item shown on the menu.
-        /// </summary>
-        public string Label = "";
-        /// <summary>
-        /// Action menu item does when selected.
-        /// </summary>
-        public Action Action;
-        /// <summary>
-        /// If false, object is treated as a bar instead of menu item.
-        /// </summary>
-        public bool IsTrueMenuItem = true;
-
-        public MenuItem(string label, Action action, bool isTrueMenuItem = true)
-        {
-            Label = label;
-            Action = action;
-            IsTrueMenuItem = isTrueMenuItem;
         }
     }
 }

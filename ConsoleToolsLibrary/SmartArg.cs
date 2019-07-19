@@ -9,7 +9,7 @@ namespace ConsoleToolsLibrary
 {
     /// <summary>
     /// The smarter command line argument. Takes string argument and provides access to a copy of 
-    /// a more suitable datatype. It should only be used for command line arguments; issues will
+    /// a more suitable data-type. It should only be used for command line arguments; issues will
     /// occur if otherwise is done.
     /// </summary>
     /// <example>
@@ -54,19 +54,19 @@ namespace ConsoleToolsLibrary
     ///     //SmartArg secondBool = SmartArg.GetArg() /* true */;
     ///     //SmartArg Str = SmartArg.GetArg() /* "bob" */;
     ///     //
-    ///     //// Example of attempted retrival of SmartArg object not derived from any command line argument
+    ///     //// Example of attempted retrieval of SmartArg object not derived from any command line argument
     ///     //SmartArg NotArg = SmartArg.GetArg() /* null */;
     ///     
-    ///     //Values can be easly stored - if you wish
+    ///     //Values can be easily stored - if you wish
     ///     int storage = firstNum.Value;
     ///     
-    ///     //Alternativly, you can get the original string value
+    ///     //Alternatively, you can get the original string value
     ///     string storage2 = firstNum.ValueStr;
     ///     
     ///     //Changes to a SmartArg are allowed. Whether you should is a different story.
     ///     firstNum.Value = 89;
     ///     
-    ///     //Changes are accessable in string form - not that you need it
+    ///     //Changes are accessible in string form - not that you need it
     ///     Console.WriteLine(firstNum.ValueStr);
     ///     
     ///     //You don't need to do much for operations. It's recommended to
@@ -77,15 +77,15 @@ namespace ConsoleToolsLibrary
     ///     
     ///     bool result3A = firstBool | secondBool;
     ///     
-    ///     //Not every operation is posible, at least without casting
+    ///     //Not every operation is possible, at least without casting
     ///     //
-    ///     //[not posible]
+    ///     //[not possible]
     ///     //bool result2B = firstBool && secondBool;
     ///     //
     ///     //bool result3B = firstBool || secondBool;
     ///     
     ///     /* WARNING:
-    ///      * Nothing has been exhaustivly tested, but most of the
+    ///      * Nothing has been exhaustively tested, but most of the
     ///      * stuff seems to work.
     ///      */
     /// }
@@ -94,7 +94,7 @@ namespace ConsoleToolsLibrary
     public class SmartArg
     {
         /// <summary>
-        /// It is what it sounds like; yes, it seems redundent; no, it should not be removed.
+        /// It is what it sounds like; yes, it seems redundant; no, it should not be removed.
         /// It allows the automatic linking of SmartArg objects
         /// </summary>
         private static SmartArg PrevDeclaredSmartArg = null;
@@ -127,8 +127,6 @@ namespace ConsoleToolsLibrary
         private bool _ValueBool = false;
         private bool IsValueBool = false;
 
-        public bool IsSwitch = false;
-
         private static Regex RegexInteger = new Regex(@"^\d+$");
         private static Regex RegexDouble = new Regex(@"^\d*[.]\d+$");
         private static Regex RegexBoolean = new Regex(@"^(true|false)$");
@@ -136,8 +134,8 @@ namespace ConsoleToolsLibrary
 
         /// <summary>
         /// Command line argument gets shoved into here as a string and then
-        /// copied elsewhere as the next best datatype (int, bool, double). This, of course,
-        /// is if the next best datatype isn't a string.
+        /// copied elsewhere as the next best data-type (int, bool, double). This, of course,
+        /// is if the next best data-type isn't a string.
         /// </summary>
         public string ValueStr
         {
@@ -155,8 +153,8 @@ namespace ConsoleToolsLibrary
         }
 
         /// <summary>
-        /// If possible, the value of "ValueStr" converted to a diffrent datatype (i.e. "4" --> 4).
-        /// Datatypes are limited to "string", "int", "double", and "bool"
+        /// If possible, the value of "ValueStr" converted to a different data-type (i.e. "4" --> 4).
+        /// Data-types are limited to "string", "int", "double", and "bool"
         /// </summary>
         public object Value
         {
@@ -186,7 +184,7 @@ namespace ConsoleToolsLibrary
 
         /// <summary>
         /// Dummy constructor for purpose of creating named reference
-        /// objects. No side effects occure from use of the constructor.
+        /// objects. No side effects occur from use of the constructor.
         /// </summary>
         public SmartArg()
         {
@@ -197,13 +195,11 @@ namespace ConsoleToolsLibrary
         /// Constructor that has side effects that impact previously created SmartArg objects
         /// </summary>
         /// <param name="stringArg"></param>
-        public SmartArg(string stringArg, bool isSwitch = false)
+        public SmartArg(string stringArg)
         {
             this.PrevSmartArg = SmartArg.PrevDeclaredSmartArg;
             this.Index = (this.PrevSmartArg?.Index ?? -1) + 1;
             this.ValueStr = stringArg??"";
-
-            this.IsSwitch = isSwitch;
 
             //*** Keep These Statements Last ***
             //make this SmartArg the previously declared SmartArg's "NextSmartArg"
@@ -212,7 +208,7 @@ namespace ConsoleToolsLibrary
             SmartArg.PrevDeclaredSmartArg = this;
         }
 
-        public SmartArg(string[] stringArgs, bool isSwitch = false)
+        public SmartArg(string[] stringArgs)
         {
             this.PrevSmartArg = SmartArg.PrevDeclaredSmartArg;
             this.Index = (this.PrevSmartArg?.Index ?? -1) + 1;
@@ -222,8 +218,6 @@ namespace ConsoleToolsLibrary
             catch (IndexOutOfRangeException){
                 this.ValueStr = "";
             }
-
-            this.IsSwitch = isSwitch;
 
             //*** Keep These Statements Last ***
             //make this SmartArg the previously declared SmartArg's "NextSmartArg"
@@ -359,15 +353,15 @@ namespace ConsoleToolsLibrary
         public bool HasPrevSmartArg { get { return this.PrevSmartArg != (object)null; } }
 
         /// <summary>
-        /// Returns a frequently used datatype that can be converted from the string argument.
+        /// Returns a frequently used data-type that can be converted from the string argument.
         /// If a conversion can't be made, the argument is returned "as is".
         /// </summary>
         /// <remarks>
-        /// The datatype "char" could be considered a frequently used datatype, but
+        /// The data-type "char" could be considered a frequently used data-type, but
         /// single characters have also been stored in strings due to need or desire.
         /// Because of this, along with the need for simple method design,
-        /// and considering the simplicty of converting single character strings to "char" datatype
-        /// , "char" datatypes can only be derived after the method's execution
+        /// and considering the simplicity of converting single character strings to "char" data-type
+        /// , "char" data-types can only be derived after the method's execution
         /// </remarks>
         /// <param name="str"></param>
         /// <returns>int, double, bool, or string</returns>
@@ -382,7 +376,7 @@ namespace ConsoleToolsLibrary
                 }
                 catch (OverflowException)
                 {
-                    Console.Error.WriteLine("Overflow Error: Integer " + str + "could not be stored in the \"int\" datatype");
+                    Console.Error.WriteLine("Overflow Error: Integer " + str + "could not be stored in the \"int\" data-type");
                     Console.WriteLine("[Program Terminated]");
                     Environment.Exit(0);
                     return str;
@@ -396,7 +390,7 @@ namespace ConsoleToolsLibrary
                 }
                 catch (OverflowException)
                 {
-                    Console.Error.WriteLine("Overflow Error: Double " + str + "could not be stored in the \"double\" datatype");
+                    Console.Error.WriteLine("Overflow Error: Double " + str + "could not be stored in the \"double\" data-type");
                     Console.WriteLine("[Program Terminated]");
                     Environment.Exit(0);
                     return str;
@@ -789,17 +783,6 @@ namespace ConsoleToolsLibrary
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        /// <summary>
-        /// Provides methods to deal with all made SmartArg objects
-        /// </summary>
-        public class SmartArgs
-        {
-            //public void ForEach(Action action)
-            //{
-            //    while
-            //}
         }
     }
 }

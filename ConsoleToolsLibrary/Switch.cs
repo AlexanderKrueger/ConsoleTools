@@ -9,7 +9,7 @@ using System.Text;
 namespace ConsoleToolsLibrary
 {
     /// <summary>
-    /// Switches modify the behaviour of the command line function.
+    /// Switches modify the behavior of the command line function.
     /// 
     /// When 'c' represents any character but '/' or '-' (adjacent 'c's can be different values),
     /// then:
@@ -91,6 +91,21 @@ namespace ConsoleToolsLibrary
         /// </remarks>
         public static List<string> AllStandAloneArgs = new List<string>();
         /// <summary>
+        /// SmartArg version of <see cref="StartStandAloneArgs"/>.
+        /// </summary>
+        /// <seealso cref="SmartArg"/>
+        public static List<SmartArg> StartStandAloneSmartArgs = new List<SmartArg>();
+        /// <summary>
+        /// SmartArg version of <see cref="EndStandAloneArgs"/>.
+        /// </summary>
+        /// <seealso cref="SmartArg"/>
+        public static List<SmartArg> EndStandAloneSmartArgs = new List<SmartArg>();
+        /// <summary>
+        /// SmartArg version of <see cref="AllStandAloneArgs"/>.
+        /// </summary>
+        /// <seealso cref="SmartArg"/>
+        public static List<SmartArg> AllStandAloneSmartArgs = new List<SmartArg>();
+        /// <summary>
         /// Multi-character-name of the switch.
         /// Expect a completely lower-case value with no switch prefix 
         /// (i.e. help, copy, alert).
@@ -125,6 +140,13 @@ namespace ConsoleToolsLibrary
         /// Arguments the switch has accepted.
         /// </summary>
         public List<string> Args = new List<string>();
+        /// <summary>
+        /// Arguments the switch has accepted, but wrapped in "SmartArg" objects
+        /// for added convenience. If the goal is avoiding string to data type conversions,
+        /// (i.e. string --> int, string --> bool) consider using a "SmartArg" object.
+        /// 
+        /// </summary>
+        public List<SmartArg> SmartArgs = new List<SmartArg>();
         public string Summary = "";
         public string Remarks = "";
 
@@ -153,7 +175,7 @@ namespace ConsoleToolsLibrary
             /// <summary>
             /// Gets Switch from AllSwitches by using either the Switch's multi-character-name or single-character-name
             /// . Switch name with switch prefix "-", "--", or "/" is optional, though, use should
-            /// be appropiate for multi-character-name or single-character-name.
+            /// be appropriate for multi-character-name or single-character-name.
             /// </summary>
             /// <param name="singleOrMultiCharName"></param>
             /// <returns></returns>
@@ -577,10 +599,11 @@ namespace ConsoleToolsLibrary
                 }
 
                 //*** * Case: Raw Arg Identified As Starting Stand-Alone Argument ***
-                //untill first switch is encountered, add arg to StartStandAloneArgs
+                //until first switch is encountered, add arg to StartStandAloneArgs
                 if (!isFirstSwitchEncountered)
                 {
                     StartStandAloneArgs.Add(arg);
+                    StartStandAloneSmartArgs.Add(new SmartArg(arg));
                     continue;
                 }
 
@@ -593,6 +616,7 @@ namespace ConsoleToolsLibrary
                     if (rawArgIsSwitchArg || !(isCurSwitchTheLast &&/* not last raw arg to be identified */ indexOfLastSwitch <= commandLineArgs.Length - 1 ))
                     {
                         curSwitch.Args.Add(arg);
+                        curSwitch.SmartArgs.Add(new SmartArg(arg));
                     }
                     else /* ERROR */
                     {
@@ -601,23 +625,29 @@ namespace ConsoleToolsLibrary
                         //here because of unit testing
                         return;
                     }
-                //but if min args is met, we need logic where max args hasen't been met
+                //but if min args is met, we need logic where max args hasn't been met
                 if (minMet && !maxMet)
                     if (rawArgIsSwitchArg)
                     {
                         curSwitch.Args.Add(arg);
+                        curSwitch.SmartArgs.Add(new SmartArg(arg));
                     }
 
                 //*** * Case: Raw Arg Identified As Ending Stand-Alone Argument ***
                 //if max args be met, but current switch is the last switch, then add to EndStandAlone
                 if (minMet && maxMet && isCurSwitchTheLast && rawArgIsSwitchArg)
+                {
                     EndStandAloneArgs.Add(arg);
+                    EndStandAloneSmartArgs.Add(new SmartArg(arg));
+                }
             }
 
             //*** Create Lists AllStandAloneArgs & UsedSwitches ***
             //*****************************************************
             Switch.AllStandAloneArgs.AddRange(StartStandAloneArgs);
             Switch.AllStandAloneArgs.AddRange(EndStandAloneArgs);
+            Switch.AllStandAloneSmartArgs.AddRange(StartStandAloneSmartArgs);
+            Switch.AllStandAloneSmartArgs.AddRange(EndStandAloneSmartArgs);
             Switch.UsedSwitches = Switch.AllSwitches.GetUsedSwitches();
         }
 
@@ -820,7 +850,7 @@ namespace ConsoleToolsLibrary
         /// The format is defined by the second argument.
         /// </summary>
         /// <param name="str">string that's examined</param>
-        /// <param name="regexPattern">Regular expresion defining the switch name format</param>
+        /// <param name="regexPattern">Regular expression defining the switch name format</param>
         /// <returns></returns>
         /// <seealso cref="ExtensionMethods.IsSwitchFormat(string)"/>
         /// <seealso cref="ExtensionMethods.IsSwitchPrefixFormat(string)"/>
@@ -840,7 +870,7 @@ namespace ConsoleToolsLibrary
             if (valueMatched.Success == false)
                 return false;
 
-            //prevent strings like "-a-x", "/a/ba", "--bo--bo", ect. from being considered a proper switch (i.e. "-h", "--help", "/h")
+            //prevent strings like "-a-x", "/a/ba", "--bo--bo", etc. from being considered a proper switch (i.e. "-h", "--help", "/h")
             if (!valueMatched.Value.Equals(str))
                 return false;
 
@@ -878,7 +908,7 @@ namespace ConsoleToolsLibrary
         /// <returns></returns>
         public static bool IsNameOfSwitch(this string name)
         {
-            //*** Ensure Name Is Of Prefered Format ***
+            //*** Ensure Name Is Of Preferred Format ***
             //*****************************************
             if (!name.IsSwitchFormat())
                 return false;
@@ -909,7 +939,7 @@ namespace ConsoleToolsLibrary
         /// <returns></returns>
         public static bool IsPrefixedNameOfSwitch(this string name)
         {
-            //*** Ensure Name Is Of Prefered Format ***
+            //*** Ensure Name Is Of Preferred Format ***
             //*****************************************
             if (!name.IsSwitchPrefixFormat())
                 return false;
