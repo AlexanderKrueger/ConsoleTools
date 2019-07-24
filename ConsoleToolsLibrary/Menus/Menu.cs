@@ -406,11 +406,11 @@ namespace ConsoleToolsLibrary
             }
         }
 
+#if false
         namespace MenuUtilities
         {
             public static class Settings
             {
-#if false
             /// <summary>
             /// Shows the user the old value of the setting in question and
             /// then prompts the user for the new value.
@@ -439,8 +439,8 @@ namespace ConsoleToolsLibrary
                     Console.Clear();
                 }
             }
-#endif
             }
         }
+    #endif
     }
 }
