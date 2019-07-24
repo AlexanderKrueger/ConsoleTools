@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ConsoleToolsLibrary;
+using ConsoleToolsLibrary.MainArgsUtil;
 
 namespace NetFrameworkLibraryUnitTests
 {

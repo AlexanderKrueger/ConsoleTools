@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleToolsLibrary;
+using ConsoleToolsLibrary.Menus;
 
 namespace SelectorMenuExampleTesting
 {
@@ -11,7 +11,7 @@ namespace SelectorMenuExampleTesting
     {
         static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;
+            //Console.OutputEncoding = Encoding.UTF8;
             //*** Initialize Menus ***
             //************************
             SelectorMenu Menu1 = new SelectorMenu();

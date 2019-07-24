@@ -8,6 +8,7 @@ using System.Text;
 
 namespace ConsoleToolsLibrary
 {
+    namespace MainArgsUtil {
     /// <summary>
     /// Switches modify the behavior of the command line function.
     /// 
@@ -843,130 +844,132 @@ namespace ConsoleToolsLibrary
        
     }
 
-    public static class ExtensionMethods
-    {
-        /// <summary>
-        /// Confirms if a string is formated as a switch name.
-        /// The format is defined by the second argument.
-        /// </summary>
-        /// <param name="str">string that's examined</param>
-        /// <param name="regexPattern">Regular expression defining the switch name format</param>
-        /// <returns></returns>
-        /// <seealso cref="ExtensionMethods.IsSwitchFormat(string)"/>
-        /// <seealso cref="ExtensionMethods.IsSwitchPrefixFormat(string)"/>
-        [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
-        private static bool IsSwitchFormat_InlinedGuts(this string str, string regexPattern)
+        public static class ExtensionMethods
         {
-            //*** Argument & Variable Prep ***
-            //********************************
-            //lower-case argument
-            str = str.ToLower();
+            /// <summary>
+            /// Confirms if a string is formated as a switch name.
+            /// The format is defined by the second argument.
+            /// </summary>
+            /// <param name="str">string that's examined</param>
+            /// <param name="regexPattern">Regular expression defining the switch name format</param>
+            /// <returns></returns>
+            /// <seealso cref="ExtensionMethods.IsSwitchFormat(string)"/>
+            /// <seealso cref="ExtensionMethods.IsSwitchPrefixFormat(string)"/>
+            [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
+            private static bool IsSwitchFormat_InlinedGuts(this string str, string regexPattern)
+            {
+                //*** Argument & Variable Prep ***
+                //********************************
+                //lower-case argument
+                str = str.ToLower();
 
-            Match valueMatched = Regex.Match(str, regexPattern);
+                Match valueMatched = Regex.Match(str, regexPattern);
 
-            //*** Ensure Valid Switch Name Format ***
-            //***************************************
-            //test if string has switch prefix "-", "--", or "/" (regex match success should be false if the prior mentioned is true)
-            if (valueMatched.Success == false)
-                return false;
+                //*** Ensure Valid Switch Name Format ***
+                //***************************************
+                //test if string has switch prefix "-", "--", or "/" (regex match success should be false if the prior mentioned is true)
+                if (valueMatched.Success == false)
+                    return false;
 
-            //prevent strings like "-a-x", "/a/ba", "--bo--bo", etc. from being considered a proper switch (i.e. "-h", "--help", "/h")
-            if (!valueMatched.Value.Equals(str))
-                return false;
+                //prevent strings like "-a-x", "/a/ba", "--bo--bo", etc. from being considered a proper switch (i.e. "-h", "--help", "/h")
+                if (!valueMatched.Value.Equals(str))
+                    return false;
 
-            //fail test if switch's name is not allowed size
-            if (    /* is switch's single-character-name, with prefix "-" or "/" removed, and is not 1 characters long */ valueMatched.Value.Replace("-", "").Replace("/", "").GetUTF8Length() != 1
-                && (/* is switch's multi-character-name, with prefix "--" removed, and is less than 2 characters */ valueMatched.Value.Replace("--", "").GetUTF8Length() < 2))
-                return false;
+                //fail test if switch's name is not allowed size
+                if (    /* is switch's single-character-name, with prefix "-" or "/" removed, and is not 1 characters long */ valueMatched.Value.Replace("-", "").Replace("/", "").GetUTF8Length() != 1
+                    && (/* is switch's multi-character-name, with prefix "--" removed, and is less than 2 characters */ valueMatched.Value.Replace("--", "").GetUTF8Length() < 2))
+                    return false;
 
-            return true;
+                return true;
+            }
+
+            /// <summary>
+            /// Returns true if the string is formated as a switch name.
+            /// </summary>
+            /// <param name="str"></param>
+            /// <returns></returns>
+            public static bool IsSwitchFormat(this string str)
+            {
+                return str.IsSwitchFormat_InlinedGuts(@"^[^-\/\s]+$");
+            }
+
+            /// <summary>
+            /// Returns true if the string is formated as a switch name.
+            /// with a switch prefix
+            /// </summary>
+            /// <param name="str"></param>
+            /// <returns></returns>
+            public static bool IsSwitchPrefixFormat(this string str)
+            {
+                return str.IsSwitchFormat_InlinedGuts(@"^(--[^-\/\s]+|(-|\/)[^-\/\s])$");
+            }
+
+            /// <summary>
+            /// Returns true if string is name of existing switch (i.e. "switch", "s").
+            /// </summary>
+            /// <param name="name">multi-character-name or single-character-name (with or without prefix)</param>
+            /// <returns></returns>
+            public static bool IsNameOfSwitch(this string name)
+            {
+                //*** Ensure Name Is Of Preferred Format ***
+                //*****************************************
+                if (!name.IsSwitchFormat())
+                    return false;
+
+                name = name.ToLower();
+
+                //*** Ensure Switch Name Is Of Existing Switch ***
+                //************************************************
+                //Fail test if no created switch has the name
+                if (!Switch.AllSwitches.Exists(s => s.Name == name || (s.Name1Char == name && !String.IsNullOrEmpty(s.Name1Char))))
+                    return false;
+
+                return true;
+            }
+
+            /// <summary>
+            /// <para>
+            /// Returns true if string is name of existing switch -- with prefix (i.e. "--switch", "-s", "/s").
+            /// </para>
+            /// <para>
+            /// Should be used directly on a program's command line arguments.
+            /// </para>
+            /// </summary>
+            /// <remarks>
+            /// Prefix is short for "switch prefix" in this method's name.
+            /// </remarks>
+            /// <param name="name">multi-character-name or single-character-name (with or without prefix)</param>
+            /// <returns></returns>
+            public static bool IsPrefixedNameOfSwitch(this string name)
+            {
+                //*** Ensure Name Is Of Preferred Format ***
+                //*****************************************
+                if (!name.IsSwitchPrefixFormat())
+                    return false;
+
+                name = name.Replace("-", "").Replace("/", "").ToLower();
+
+                //*** Ensure Switch Name Is Of Existing Switch ***
+                //************************************************
+                //Fail test if no created switch has the name
+                if (!Switch.AllSwitches.Exists(s => s.Name == name || (s.Name1Char == name && !String.IsNullOrEmpty(s.Name1Char))))
+                    return false;
+
+                return true;
+            }
+
+            /// <summary>
+            /// Gets the total UTF-8 text elements in a string. The need for this method can be shown
+            /// with "🦄". It counts as 2 characters if its length is retrieved, which is problematic if one is
+            /// counting emoji. Thankfully, this method returns 1 for 1 unicorn text element.
+            /// </summary>
+            /// <param name="str"></param>
+            /// <returns></returns>
+            public static int GetUTF8Length(this string str)
+            {
+                StringInfo strInfo = new StringInfo(str);
+                return strInfo.LengthInTextElements;
+            }
         }
-
-        /// <summary>
-        /// Returns true if the string is formated as a switch name.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static bool IsSwitchFormat(this string str) {
-            return str.IsSwitchFormat_InlinedGuts(@"^[^-\/\s]+$");
-        }
-
-        /// <summary>
-        /// Returns true if the string is formated as a switch name.
-        /// with a switch prefix
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static bool IsSwitchPrefixFormat(this string str) {
-            return str.IsSwitchFormat_InlinedGuts(@"^(--[^-\/\s]+|(-|\/)[^-\/\s])$");
-        }
-
-        /// <summary>
-        /// Returns true if string is name of existing switch (i.e. "switch", "s").
-        /// </summary>
-        /// <param name="name">multi-character-name or single-character-name (with or without prefix)</param>
-        /// <returns></returns>
-        public static bool IsNameOfSwitch(this string name)
-        {
-            //*** Ensure Name Is Of Preferred Format ***
-            //*****************************************
-            if (!name.IsSwitchFormat())
-                return false;
-
-            name = name.ToLower();
-
-            //*** Ensure Switch Name Is Of Existing Switch ***
-            //************************************************
-            //Fail test if no created switch has the name
-            if (!Switch.AllSwitches.Exists(s => s.Name == name || (s.Name1Char == name && !String.IsNullOrEmpty(s.Name1Char))))
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// <para>
-        /// Returns true if string is name of existing switch -- with prefix (i.e. "--switch", "-s", "/s").
-        /// </para>
-        /// <para>
-        /// Should be used directly on a program's command line arguments.
-        /// </para>
-        /// </summary>
-        /// <remarks>
-        /// Prefix is short for "switch prefix" in this method's name.
-        /// </remarks>
-        /// <param name="name">multi-character-name or single-character-name (with or without prefix)</param>
-        /// <returns></returns>
-        public static bool IsPrefixedNameOfSwitch(this string name)
-        {
-            //*** Ensure Name Is Of Preferred Format ***
-            //*****************************************
-            if (!name.IsSwitchPrefixFormat())
-                return false;
-
-            name = name.Replace("-", "").Replace("/", "").ToLower();
-
-            //*** Ensure Switch Name Is Of Existing Switch ***
-            //************************************************
-            //Fail test if no created switch has the name
-            if (!Switch.AllSwitches.Exists(s => s.Name == name || (s.Name1Char == name && !String.IsNullOrEmpty(s.Name1Char))))
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the total UTF-8 text elements in a string. The need for this method can be shown
-        /// with "🦄". It counts as 2 characters if its length is retrieved, which is problematic if one is
-        /// counting emoji. Thankfully, this method returns 1 for 1 unicorn text element.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static int GetUTF8Length(this string str)
-        {
-            StringInfo strInfo = new StringInfo(str);
-            return strInfo.LengthInTextElements;
-        }
-
     }
 }
