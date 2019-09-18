@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleToolsLibrary.Menus;
+using ConsoleTools.Menus;
 
 namespace SelectorMenuExampleTesting
 {
@@ -11,7 +11,7 @@ namespace SelectorMenuExampleTesting
     {
         static void Main(string[] args)
         {
-            //Console.OutputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
             //*** Initialize Menus ***
             //************************
             SelectorMenu Menu1 = new SelectorMenu();
@@ -29,7 +29,8 @@ namespace SelectorMenuExampleTesting
                 .AddItem("GoTo A Message", () => Menu1.GoTo("Press any key: go back."))
                 .AddItem("GoTo A Message, then arrive at Menu2", () => Menu2.GoTo("Press any key: go to Menu2"))
                 .AddItem("GoTo Menu2 (Expecting Green Text)", () => Menu2.GoTo())
-                .AddItem("GoTo Menu3 (Swap Testing)")
+                .AddItem("GoTo Menu3 (Swap Testing)", () => Menu3.GoTo())
+                .AddItem("GoTo Menu4 (Multi-Line Bar Testing)", () => Menu4.GoTo())
                 .AddItem("GoTo MenuBasic (Is BasicMenu)", () => MenuBasic.GoTo())
                 .AddItem("EXIT", () => SelectorMenu.Exit());
 
@@ -45,9 +46,7 @@ namespace SelectorMenuExampleTesting
                     label: "C) Uh...",
                     action: () =>
                     {
-                        Console.Clear();
-                        Console.WriteLine("I'm the real option?");
-                        Console.ReadKey();
+                        Menu2.GoTo("I'm the real option?");
                     })
                 .AddItem(
                     label: "GoTo Menu1",
@@ -75,7 +74,7 @@ namespace SelectorMenuExampleTesting
                 .AddItem("Option2) Be Bill Murray", delegate () { Menu4.GoTo("He's an actor"); })
                 .AddItem("Option3) Be Bill Gates", delegate () { Menu4.GoTo("Microsoft. Enough said..."); })
                 .AddItem("Option4) Be Bill (the overly generic person)", delegate () { Menu4.GoTo("Hi guys."); })
-                .AddBar()
+                .AddBar("-----------------------------\n-----------------------------\n-----------------------------")
                 .AddItem("GoTo Menu1", delegate () { Menu1.GoTo(); })
                 .AddItem("GoTo Menu2", delegate () { Menu2.GoTo(); })
                 .AddItem("GoTo Menu3", delegate () { Menu3.GoTo(); })

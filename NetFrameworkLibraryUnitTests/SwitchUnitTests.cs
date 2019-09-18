@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ConsoleToolsLibrary.MainArgsUtil;
+using ConsoleTools.MainArgsUtil;
 
 namespace NetFrameworkLibraryUnitTests
 {
@@ -310,6 +310,21 @@ namespace NetFrameworkLibraryUnitTests
                 }
 
                 [TestMethod]
+                public void AllowSingleDashBetweenCharacters()
+                {
+                    try
+                    {
+                        var testSwitch = new Switch(
+                            name: "my-test-name",
+                            name1Char: "m");
+                    }
+                    catch (Exception)
+                    {
+                        Assert.Fail("Failed to allow single dashes in name (i.e. some-name, a-realy-long-name)");
+                    }
+                }
+
+                [TestMethod]
                 public void HasNoSwitchPrefixes() {
                     try
                     {
@@ -338,7 +353,29 @@ namespace NetFrameworkLibraryUnitTests
                         return;
                     }
 
-                    Assert.Fail("Failed to stop Switch object as multi-character-name was not greater than 1 character");
+                    Assert.Fail("Failed to stop Switch object creation when multi-character-name was not greater than 1 character");
+
+                    try
+                    {
+                        var testSwitch2 = new Switch(
+                            name: "ab",
+                            name1Char: "b");
+                    }
+                    catch(Exception)
+                    {
+                        Assert.Fail("Failed to allow minimum name length of 2 characters");
+                    }
+
+                    try
+                    {
+                        var testSwitch3 = new Switch(
+                            name: "abcdefghijklmnopqrstuvwxyz",
+                            name1Char: "z");
+                    }
+                    catch(Exception)
+                    {
+                        Assert.Fail("Failed to allow name length greater than 2 characters");
+                    }
                 }
 
                 //TODO: Add to Mindly
@@ -543,9 +580,9 @@ namespace NetFrameworkLibraryUnitTests
 
                     /// <remarks>
                     /// Ban of Switch prefixes in Switch name is
-                    /// tested in a diferent test. Although the
+                    /// tested in a different test. Although the
                     /// method's name implies this feature is reinforced
-                    /// here, for the sake of elminating redundency,
+                    /// here, for the sake of eliminating redundancy,
                     /// the test is excluded.
                     /// </remarks>
                     [TestMethod]
@@ -708,7 +745,7 @@ namespace NetFrameworkLibraryUnitTests
 
                     var args = new string[] { "--test",
                         "Allies are the undead (God of War), Death Claws (Fallout), and player1 with a nano suit (Crysis; with 2 weapons of choice) ",
-                        "Fraction of allies ride into glorious battle on queen Xenomorphs (Alien) equiped with rail guns", 
+                        "Fraction of allies ride into glorious battle on queen Xenomorphs (Alien) equipped with rail guns", 
                         "'Environmental hazards' include actively firing imperial-class Star Destroyers (Star Wars; reason: poor aim), Reapers (Mass Effect), dragons (Skyrim), and Tribbles (Star Trek; tripping hazard... or dragon food?)",
                         "'Environmental hazards' include debri -- falling or stationary -- from inevitable intercombat of previously said 'environmental hazards'",
                         "Enemies are demons (Doom), demons (Dragon Age), and player2 as 'the demon' (Halo; with 2 weapons of choice)",
@@ -752,9 +789,15 @@ namespace NetFrameworkLibraryUnitTests
 
                     var args = new string[] { "--test" };
 
-                    Switch.AssimilateArgs(args);
+                    try
+                    {
+                        Switch.AssimilateArgs(args);
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                    }
 
-                    //Its expected test will not reach this point as program will close before this line is executed
                     Assert.Fail("Program was not closed despite Switch not having the required amount of arguments");
                 }
             }
@@ -785,7 +828,7 @@ namespace NetFrameworkLibraryUnitTests
         /* Note:
          * At the moment, almost all tests that would've taken place in this class
          * are located in class "Method_AssimilateArgs.IdentifiedArgs".
-         * To prevent maintnence complications, said tests have NOT
+         * To prevent maintenance complications, said tests have NOT
          * been copied here.
          * 
          * Only exception to this is List "AllStandAloneArgs"
