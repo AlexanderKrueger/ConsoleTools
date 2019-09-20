@@ -1,0 +1,9 @@
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\bin\Release\netstandard2.0\ConsoleToolsLibrary.deps.json
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\bin\Release\netstandard2.0\ConsoleToolsLibrary.dll
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\bin\Release\netstandard2.0\ConsoleToolsLibrary.pdb
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\obj\Release\netstandard2.0\ConsoleToolsLibrary.csprojAssemblyReference.cache
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\obj\Release\netstandard2.0\ConsoleToolsLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\obj\Release\netstandard2.0\ConsoleToolsLibrary.AssemblyInfoInputs.cache
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\obj\Release\netstandard2.0\ConsoleToolsLibrary.AssemblyInfo.cs
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\obj\Release\netstandard2.0\ConsoleToolsLibrary.dll
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleToolsLibrary\ConsoleToolsLibrary\obj\Release\netstandard2.0\ConsoleToolsLibrary.pdb

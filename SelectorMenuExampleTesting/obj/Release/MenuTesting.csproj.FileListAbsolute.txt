@@ -1,0 +1,10 @@
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\bin\Release\SelectorMenuExampleTesting.exe.config
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\bin\Release\SelectorMenuExampleTesting.exe
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\bin\Release\SelectorMenuExampleTesting.pdb
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\bin\Release\ConsoleTools.dll
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\bin\Release\ConsoleTools.pdb
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\obj\Release\MenuTesting.csprojAssemblyReference.cache
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\obj\Release\MenuTesting.csproj.CoreCompileInputs.cache
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\obj\Release\MenuTesting.csproj.CopyComplete
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\obj\Release\SelectorMenuExampleTesting.exe
+C:\Users\Textb\OneDrive\Documents\_SharedProgramming\Libraries\ConsoleTools\SelectorMenuExampleTesting\obj\Release\SelectorMenuExampleTesting.pdb
